@@ -60,3 +60,32 @@ function showList() {
 
 }
 showList();
+
+// grab add button and listen for the click to add a new book
+const addButton = document.querySelector('#submit');
+addButton.addEventListener('click', event => {
+    event.preventDefault();
+    addNewBook();
+})
+
+// generate the new book lists
+function addNewBook() {
+    // call all inputs
+    const newBook = `
+        <tr id="book-lists">
+          <td id="title-text">${titleInput.value}</td>
+          <td id="author-text">${authorInput.value}</td>
+          <td id="genre-text">${gnereInput.value}</td>
+          <td id="page-number">${pagesInput.value}</td>
+          <td id="read-status">
+              <label for="checkbox"></label>
+              <input type="checkbox" name="checkbox" id="checkbox">
+          </td>
+          <td id="delete"><svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5ZM1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6Z" fill="#747474"/>
+              </svg>
+          </td> 
+        </tr>
+  `;
+    bookList.insertAdjacentHTML('beforeend', newBook);
+}
