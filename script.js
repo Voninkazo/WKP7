@@ -70,7 +70,8 @@ showList();
 const myForm = document.querySelector('form');
 const addButton = document.querySelector('#submit');
 let myBook = [];
-addButton.addEventListener('click', event => {
+
+function handleSubmit(event) {
     event.preventDefault();
     //create the new object and generate in an array
     myBook = {
@@ -85,19 +86,9 @@ addButton.addEventListener('click', event => {
     console.log(spreadBook);
     addNewBook();
     myForm.reset();
-});
-
-// add to local storage
-const saveToLocalStorage = () => {
-    console.info('Store items from local storage');
-    const lsItems = JSON.parse(localStorage.getItem('items'));
-    console.log(lsItems);
-    if (lsItems) {
-        myBook.push(...lsItems);
-    }
-    spreadBook.dispatchEvent(new CustomEvent('itemUpdate'));
+    myForm.dispatchEvent(new CustomEvent('itemsUpdated'));
 };
-spreadBook.addEventListener('itemUpdate', saveToLocalStorage);
+myForm.addEventListener('submit', handleSubmit);
 
 
 // generate the new book lists
@@ -120,30 +111,38 @@ function addNewBook() {
         </tr>
   `;
     bookList.insertAdjacentHTML('beforeend', newBook);
-    window.localStorage.setItem('user', JSON.stringify(newBook));
 }
-
 
 // grab checkbox
 const checkboxes = document.querySelectorAll('#checkbox');
 
-// function handleCheckbox() {
-//     const statusInput = document.querySelector('#status');
-//     if (checkboxes.checked) {
-//         statusInput.textContent = 'read';
-//     }
-// }
+//handle checkboxes
+window.addEventListener('change', event => {
+    event.preventDefault();
+    if (event.target.matches('#status')) {
+        // let array = [...spreadBook]
+        if ($('#dropdown :selected').text() === 'read') {
+            $('#checkbox').prop('checked', true);
+        }
+    }
+});
 
-// handle checkboxes
-// window.addEventListener('change', event => {
-//     event.preventDefault();
-//     if (event.target.matches('#checkbox')) {
-//         // let array = [...spreadBook]
-//         if (checkboxes.checked) {
-//             statusInput.value = 'read';
-//         }
-//     }
-// });
+// store to local storge
+function mirroToLocalStorage() {
+    console.info('Saving items to local storage');
+    localStorage.setItem('items', JSON.stringify(myBook));
+}
+
+// restore from local storage
+function restoreFromLocalStorage() {
+    console.info('restore from local storage');
+    const itemLists = JSON.parse(localStorage.getItem('items'));
+    if (itemLists.length) {
+        myBook.push(...itemLists);
+        myForm.dispatchEvent(new CustomEvent('itemsUpdated'));
+    }
+}
+myForm.addEventListener('itemsUpdated', mirroToLocalStorage);
 
 // grab the icon delete
 const iconDelete = document.querySelector('#delete');
@@ -154,3 +153,5 @@ window.addEventListener('click', event => {
         myBookList.remove();
     }
 });
+
+restoreFromLocalStorage();
