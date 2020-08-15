@@ -1,28 +1,31 @@
 console.log('it works');
 const books = [{
         title: 'The boy in the stripped pyjamas',
-        genre: 'inoncent sotry',
+        genre: 'innocent sotry',
         author: 'John boyne',
         pages: 215,
+        id: Date.now(),
     },
     {
         title: 'Harry Potter and the Philosopher Stone',
         genre: 'Fantasy',
         author: 'JK Rowling',
         pages: 323,
-
+        id: Date.now(),
     },
     {
         title: 'Pachinko',
         genre: 'Fiction',
         author: 'Min Jin Lee',
         pages: 496,
+        id: Date.now(),
     },
     {
         title: 'Educated',
         author: 'Tara Westover',
         genre: 'Memoir',
         pages: 400,
+        id: Date.now(),
     }
 ];
 
@@ -31,13 +34,15 @@ const titleInput = document.querySelector('#title');
 const authorInput = document.querySelector('#author');
 const pagesInput = document.querySelector('#page');
 const gnereInput = document.querySelector('#genre');
+const statusInput = document.querySelector('#read-status');
 
 
 //  map through the array to show the list of existing books
+let spreadBook = [...books];
 const bookList = document.querySelector('table'); // the table
 
 function showList() {
-    const html = books.map(book => {
+    const html = spreadBook.map(book => {
         return `
         <tr id="book-lists">
           <td id="title-text">${book.title}</td>
@@ -62,11 +67,38 @@ function showList() {
 showList();
 
 // grab add button and listen for the click to add a new book
+const myForm = document.querySelector('form');
 const addButton = document.querySelector('#submit');
+let myBook = [];
 addButton.addEventListener('click', event => {
     event.preventDefault();
+    //create the new object and generate in an array
+    myBook = {
+            title: `${titleInput.title}`,
+            id: Date.now(),
+            author: `${authorInput.value}`,
+            genre: `${gnereInput.value}`,
+            pages: `${pagesInput.value}`,
+        }
+        // push into the array
+    spreadBook.push(myBook);
+    console.log(spreadBook);
     addNewBook();
-})
+    myForm.reset();
+});
+
+// add to local storage
+const saveToLocalStorage = () => {
+    console.info('Store items from local storage');
+    const lsItems = JSON.parse(localStorage.getItem('items'));
+    console.log(lsItems);
+    if (lsItems) {
+        myBook.push(...lsItems);
+    }
+    spreadBook.dispatchEvent(new CustomEvent('itemUpdate'));
+};
+spreadBook.addEventListener('itemUpdate', saveToLocalStorage);
+
 
 // generate the new book lists
 function addNewBook() {
@@ -88,4 +120,37 @@ function addNewBook() {
         </tr>
   `;
     bookList.insertAdjacentHTML('beforeend', newBook);
+    window.localStorage.setItem('user', JSON.stringify(newBook));
 }
+
+
+// grab checkbox
+const checkboxes = document.querySelectorAll('#checkbox');
+
+// function handleCheckbox() {
+//     const statusInput = document.querySelector('#status');
+//     if (checkboxes.checked) {
+//         statusInput.textContent = 'read';
+//     }
+// }
+
+// handle checkboxes
+// window.addEventListener('change', event => {
+//     event.preventDefault();
+//     if (event.target.matches('#checkbox')) {
+//         // let array = [...spreadBook]
+//         if (checkboxes.checked) {
+//             statusInput.value = 'read';
+//         }
+//     }
+// });
+
+// grab the icon delete
+const iconDelete = document.querySelector('#delete');
+// listen for it
+window.addEventListener('click', event => {
+    const myBookList = event.target.closest('#book-lists');
+    if (event.target.matches('#delete')) {
+        myBookList.remove();
+    }
+});
