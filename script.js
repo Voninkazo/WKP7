@@ -35,6 +35,7 @@ const authorInput = document.querySelector('#author');
 const pagesInput = document.querySelector('#page');
 const gnereInput = document.querySelector('#genre');
 const statusInput = document.querySelector('#read-status');
+const myForm = document.querySelector('form');
 
 
 //  map through the array to show the list of existing books
@@ -62,12 +63,10 @@ function showList() {
     });
     // add it to the DOM
     bookList.insertAdjacentHTML('beforeend', html.join(''));
-
 }
 showList();
 
 // grab add button and listen for the click to add a new book
-const myForm = document.querySelector('form');
 const addButton = document.querySelector('#submit');
 let myBook = [];
 
@@ -144,13 +143,18 @@ function restoreFromLocalStorage() {
 }
 myForm.addEventListener('itemsUpdated', mirroToLocalStorage);
 
-// grab the icon delete
-const iconDelete = document.querySelector('#delete');
-// listen for it
-window.addEventListener('click', event => {
-    const myBookList = event.target.closest('#book-lists');
-    if (event.target.matches('#delete')) {
+// we will delete the item by clicking the cell with the icon delete
+function handleDelete(id) {
+    console.log('Deleting item');
+}
+
+const deleteBtn = document.querySelectorAll('#delete');
+// listen for a cllick on the tr but not in the current target with event delegation
+bookList.addEventListener('click', function(event) {
+    if (event.target.matches('td#delete')) {
+        const myBookList = event.target.closest('#book-lists');
         myBookList.remove();
+        handleDelete();
     }
 });
 
