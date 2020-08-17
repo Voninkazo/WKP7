@@ -5,6 +5,7 @@ const books = [{
         author: 'John boyne',
         pages: 215,
         id: Date.now(),
+        read: true,
     },
     {
         title: 'Harry Potter and the Philosopher Stone',
@@ -12,6 +13,7 @@ const books = [{
         author: 'JK Rowling',
         pages: 323,
         id: Date.now(),
+        read: false,
     },
     {
         title: 'Pachinko',
@@ -19,13 +21,16 @@ const books = [{
         author: 'Min Jin Lee',
         pages: 496,
         id: Date.now(),
+        read: true,
     },
+
     {
         title: 'Educated',
         author: 'Tara Westover',
         genre: 'Memoir',
         pages: 400,
         id: Date.now(),
+        read: false,
     }
 ];
 
@@ -52,17 +57,18 @@ function showList() {
           <td id="page-number">${book.pages}</td>
           <td id="read-status">
               <label for="checkbox"></label>
-              <input type="checkbox" name="checkbox" id="checkbox">
+              <input ${book.read ? 'checked' : ''} type="checkbox" name="checkbox" id="checkbox">
           </td>
           <td id="delete"><svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5ZM1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6Z" fill="#747474"/>
-              </svg>
+              </svg>    
           </td> 
         </tr>
   `;
     });
     // add it to the DOM
     bookList.insertAdjacentHTML('beforeend', html.join(''));
+    console.log(spreadBook);
 }
 showList();
 
@@ -74,7 +80,7 @@ function handleSubmit(event) {
     event.preventDefault();
     //create the new object and generate in an array
     myBook = {
-            title: `${titleInput.title}`,
+            title: `${titleInput.value}`,
             id: Date.now(),
             author: `${authorInput.value}`,
             genre: `${gnereInput.value}`,
@@ -103,7 +109,7 @@ function addNewBook() {
               <label for="checkbox"></label>
               <input type="checkbox" name="checkbox" id="checkbox">
           </td>
-          <td id="delete"><svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <td id="delete" value="${myBook.id}"><svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10.5 1L9.5 0H4.5L3.5 1H0V3H14V1H10.5ZM1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM3 6H11V16H3V6Z" fill="#747474"/>
               </svg>
           </td> 
@@ -145,7 +151,12 @@ myForm.addEventListener('itemsUpdated', mirroToLocalStorage);
 
 // we will delete the item by clicking the cell with the icon delete
 function handleDelete(id) {
-    console.log('Deleting item');
+    console.log('Deleting item', id);
+
+    // update the array after deleting
+    myBook = myBook.filter(item => item.id !== id);
+    console.log(myBook);
+    myForm.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
 const deleteBtn = document.querySelectorAll('#delete');
@@ -154,8 +165,9 @@ bookList.addEventListener('click', function(event) {
     if (event.target.matches('td#delete')) {
         const myBookList = event.target.closest('#book-lists');
         myBookList.remove();
-        handleDelete();
+        handleDelete(parseInt(event.target.value));
     }
 });
 
 restoreFromLocalStorage();
+console.log("Hello world")
