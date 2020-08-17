@@ -26,4 +26,5 @@
     If it's possible, I would like more explanation about the local storage(store and delete) and the checkbox awith dropdown please.
 
 6. Any other comments?
-I really loved this project becasue there are some useful esson I need to know. I was really happy coding too.
+
+   I really loved this project becasue there are some useful esson I need to know. I was really happy coding too.
